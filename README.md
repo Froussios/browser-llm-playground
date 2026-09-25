@@ -64,6 +64,11 @@ After a minute the page is live at https://froussios.github.io/browser-llm-playg
 Every push to that branch redeploys it. The empty `.nojekyll` file tells Pages to serve the
 files as they are.
 
+If your account's user site (`<username>.github.io`) has a custom domain, GitHub redirects every
+project site to that domain. If that domain doesn't serve HTTPS, the playground ends up on
+`http://`, where Chrome hides the Prompt API. Either enable "Enforce HTTPS" for the domain or
+remove it. After a change to the user site's domain, redeploy this site so it picks it up.
+
 ### Running locally
 
 Open `index.html` directly in Chrome, or serve the folder with any static server:
