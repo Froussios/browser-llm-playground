@@ -23,20 +23,27 @@ No server, no build step, no dependencies: just `index.html`, `style.css` and `a
 
 ## Enabling the Prompt API in Chrome
 
-You need desktop Chrome on Windows, macOS, Linux or ChromeOS with enough disk space and a capable
-GPU or CPU. The page shows these steps itself when `LanguageModel` is missing.
+The page reports what your browser exposes, so open it first and read the status bar. If
+**LanguageModel** says `present` and **Availability** says `available`, there is nothing to set up.
 
-1. Open `chrome://flags/#prompt-api-for-gemini-nano` and set it to **Enabled**.
-2. Open `chrome://flags/#optimization-guide-on-device-model` and set it to **Enabled BypassPerfRequirement**.
-3. Relaunch Chrome and open the page.
-4. If **Availability** says `downloadable`, send a prompt. That starts the model download and the
-   progress bar fills in. You can also watch it at `chrome://components`
-   (*Optimization Guide On Device Model*).
+1. Use desktop Google Chrome 148 or newer on Windows, macOS, Linux or ChromeOS. The Prompt API
+   shipped to stable in Chrome 148. Other Chromium-based browsers may not include it. Update
+   Chrome at `chrome://settings/help`.
+2. On Chrome 148 or newer the API is normally on without flags. If `LanguageModel` is still
+   missing, open `chrome://flags`, search for "Prompt API" and "on device", enable any matching
+   entries that exist, and relaunch. Flag names change between versions and some builds have
+   none. Older builds used `#prompt-api-for-gemini-nano` and
+   `#optimization-guide-on-device-model` (set to "Enabled BypassPerfRequirement").
+3. If **Availability** says `downloadable`, send a prompt. That starts the model download and the
+   progress bar fills in.
+4. If **Availability** says `unavailable`, the device or profile can't run the model. Typical
+   causes are too little free disk space, an unsupported GPU or CPU, or an enterprise policy.
+   `chrome://on-device-internals` shows the model status and the exact reason. If that page is
+   blocked, enable internal debug pages at `chrome://chrome-urls` first.
 
 If your Chrome version only exposes the API to web pages through an origin trial, register the
 origin `https://froussios.github.io` for the Prompt API trial and paste the token into the
-commented-out `<meta http-equiv="origin-trial">` tag in `index.html`. With the flags enabled
-no token is needed.
+commented-out `<meta http-equiv="origin-trial">` tag in `index.html`.
 
 ## Hosting
 
@@ -63,4 +70,4 @@ npx serve .
 python3 -m http.server 8000
 ```
 
-Both `file://` and `http://localhost` work with the flags above.
+Both `file://` and `http://localhost` work.

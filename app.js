@@ -7,7 +7,7 @@
   const el = {
     browser: $('browser'), apiPresence: $('api-presence'), availability: $('availability'),
     recheck: $('recheck'), otherApis: $('other-apis'), download: $('download'),
-    downloadBar: $('download-bar'), downloadText: $('download-text'), help: $('help'),
+    downloadBar: $('download-bar'), downloadText: $('download-text'), help: $('help'), helpUnavailable: $('help-unavailable'),
     systemPrompt: $('system-prompt'), samplingParams: $('sampling-params'),
     temperature: $('temperature'), temperatureOut: $('temperature-out'),
     topk: $('topk'), topkOut: $('topk-out'),
@@ -80,10 +80,12 @@
   function describeBrowser() {
     const uad = navigator.userAgentData;
     if (uad?.brands?.length) {
-      return uad.brands
+      const text = uad.brands
         .filter((b) => !/not.?a.?brand/i.test(b.brand))
         .map((b) => `${b.brand} ${b.version}`)
         .join(', ') + (uad.platform ? ` on ${uad.platform}` : '');
+      const isChrome = uad.brands.some((b) => b.brand === 'Google Chrome');
+      return isChrome ? text : `${text} (not Google Chrome: the Prompt API may be unavailable)`;
     }
     return navigator.userAgent;
   }
@@ -143,6 +145,7 @@
       const a = await traced('LanguageModel.availability()', opts, () => state.api.availability(opts));
       el.availability.textContent = String(a);
       el.availability.className = 'avail-' + a;
+      el.helpUnavailable.classList.toggle('hidden', a !== 'unavailable');
     } catch (e) {
       el.availability.textContent = `${e.name}: ${e.message}`;
       el.availability.className = 'avail-unavailable';
