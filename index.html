@@ -21,6 +21,7 @@
         <button id="recheck" type="button" class="small">Re-check</button>
       </div>
       <div><span class="label">Other built-in AI globals</span> <span id="other-apis">…</span></div>
+      <div><span class="label">Context</span> <span id="context">…</span></div>
     </div>
     <div id="download" class="download hidden">
       <span class="label">Model download</span>
@@ -29,7 +30,8 @@
     </div>
     <div id="help" class="help hidden">
       <strong>The Prompt API is not exposed on this page.</strong>
-      <ol>
+      <p id="help-reason" class="help-reason hidden"></p>
+      <ol id="help-steps">
         <li>Use desktop Google Chrome 148 or newer on Windows, macOS, Linux or ChromeOS. Other Chromium browsers may not include the API. Update Chrome at <code>chrome://settings/help</code>.</li>
         <li>On Chrome 148 or newer the API is normally on without flags. If it is still missing, open <code>chrome://flags</code>, search for <em>Prompt API</em> and <em>on device</em>, enable any matching entries that exist, and relaunch. Flag names vary by version, and some builds have none.</li>
         <li>Check the model status, and why it is unavailable, at <code>chrome://on-device-internals</code>. If that page is blocked, enable internal debug pages at <code>chrome://chrome-urls</code> first.</li>

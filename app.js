@@ -6,7 +6,8 @@
   const $ = (id) => document.getElementById(id);
   const el = {
     browser: $('browser'), apiPresence: $('api-presence'), availability: $('availability'),
-    recheck: $('recheck'), otherApis: $('other-apis'), download: $('download'),
+    recheck: $('recheck'), otherApis: $('other-apis'), context: $('context'),
+    helpReason: $('help-reason'), helpSteps: $('help-steps'), download: $('download'),
     downloadBar: $('download-bar'), downloadText: $('download-text'), help: $('help'), helpUnavailable: $('help-unavailable'),
     systemPrompt: $('system-prompt'), samplingParams: $('sampling-params'),
     temperature: $('temperature'), temperatureOut: $('temperature-out'),
@@ -90,8 +91,20 @@
     return navigator.userAgent;
   }
 
+  function describeContext() {
+    let framed;
+    try { framed = window.top !== window; } catch { framed = true; }
+    const origin = location.protocol === 'file:' ? 'file' : `${location.protocol}//${location.host}`;
+    return { secure: self.isSecureContext === true, framed, origin };
+  }
+
+  const PAGE_URL = 'https://froussios.github.io/browser-llm-playground/';
+
   async function detect() {
     el.browser.textContent = describeBrowser();
+    const ctx = describeContext();
+    el.context.textContent = [ctx.secure ? 'secure' : 'NOT secure', ctx.framed ? 'framed' : 'top-level', ctx.origin].join(' · ');
+    if (!ctx.secure || ctx.framed) el.context.className = 'missing';
 
     const present = OTHER_APIS.filter((name) => typeof self[name] !== 'undefined');
     el.otherApis.textContent = present.length ? present.join(', ') : 'none';
@@ -102,7 +115,18 @@
       el.apiPresence.className = 'missing';
       el.availability.textContent = 'n/a';
       el.help.classList.remove('hidden');
-      log('detect', undefined, { result: { LanguageModel: false, isSecureContext: self.isSecureContext } });
+      let reason = '';
+      if (!ctx.secure) {
+        reason = 'This page is not running in a secure context, so Chrome hides the built-in AI APIs. ' +
+          `Open ${PAGE_URL} directly in a Chrome tab, not over http:// or inside another app's viewer.`;
+      } else if (ctx.framed) {
+        reason = 'This page is embedded in another page, which can hide the built-in AI APIs. Open it directly in its own tab.';
+      }
+      if (reason) {
+        el.helpReason.textContent = reason;
+        el.helpReason.classList.remove('hidden');
+      }
+      log('detect', undefined, { result: { LanguageModel: false, context: ctx } });
       return;
     }
     el.apiPresence.textContent = 'present';

@@ -79,6 +79,7 @@ input[type="range"] { width: 100%; }
 .download progress { flex: 1; max-width: 400px; }
 .help { margin-top: 10px; padding: 10px 12px; background: var(--warn-bg); border-radius: 6px; }
 .help ol { margin: 6px 0 0; padding-left: 20px; }
+.help-reason { margin: 6px 0 0; font-weight: 600; color: var(--error); }
 .avail-available { color: #188038; font-weight: 600; }
 .avail-downloadable, .avail-downloading { color: #b06000; font-weight: 600; }
 .avail-unavailable, .missing { color: var(--error); font-weight: 600; }
