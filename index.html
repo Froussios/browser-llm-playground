@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt API Playground</title>
+  <!-- Optional: if your Chrome version still requires an origin trial token for the Prompt API
+       on web pages, register https://froussios.github.io and paste the token below.
+       Not needed when chrome://flags/#prompt-api-for-gemini-nano is enabled. -->
+  <!-- <meta http-equiv="origin-trial" content="PASTE_TOKEN_HERE"> -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="status">
+    <h1>Prompt API Playground</h1>
+    <div class="status-grid">
+      <div><span class="label">Browser</span> <span id="browser">…</span></div>
+      <div><span class="label">LanguageModel</span> <span id="api-presence">…</span></div>
+      <div>
+        <span class="label">Availability</span> <span id="availability">…</span>
+        <button id="recheck" type="button" class="small">Re-check</button>
+      </div>
+      <div><span class="label">Other built-in AI globals</span> <span id="other-apis">…</span></div>
+    </div>
+    <div id="download" class="download hidden">
+      <span class="label">Model download</span>
+      <progress id="download-bar" max="1" value="0"></progress>
+      <span id="download-text">0%</span>
+    </div>
+    <div id="help" class="help hidden">
+      <strong>The Prompt API is not exposed on this page.</strong>
+      <ol>
+        <li>Use a recent desktop Chrome (or Canary/Dev).</li>
+        <li>Open <code>chrome://flags/#prompt-api-for-gemini-nano</code> and set it to <em>Enabled</em>.</li>
+        <li>Open <code>chrome://flags/#optimization-guide-on-device-model</code> and set it to <em>Enabled BypassPerfRequirement</em>.</li>
+        <li>Relaunch Chrome, reload this page. If availability says <em>downloadable</em>, sending the first prompt starts the model download. Progress can also be watched at <code>chrome://components</code> (Optimization Guide On Device Model).</li>
+      </ol>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="settings">
+      <h2>Session settings</h2>
+      <p class="hint">Defaults are fine. Changes apply to the next session (<em>New session</em>).</p>
+
+      <label for="system-prompt">System prompt</label>
+      <textarea id="system-prompt" rows="4" placeholder="(none)"></textarea>
+
+      <div id="sampling-params" class="hidden">
+        <label for="temperature">Temperature <output id="temperature-out"></output></label>
+        <input id="temperature" type="range" min="0" max="2" step="0.05" value="1">
+        <label for="topk">Top-K <output id="topk-out"></output></label>
+        <input id="topk" type="range" min="1" max="8" step="1" value="3">
+      </div>
+
+      <div id="sampling-mode-wrap" class="hidden">
+        <label for="sampling-mode">Sampling mode</label>
+        <select id="sampling-mode">
+          <option value="">(browser default)</option>
+          <option value="most-predictable">most-predictable</option>
+          <option value="more-predictable">more-predictable</option>
+          <option value="balanced">balanced</option>
+          <option value="more-creative">more-creative</option>
+          <option value="most-creative">most-creative</option>
+        </select>
+      </div>
+
+      <label for="language">Language (BCP 47, blank to omit)</label>
+      <input id="language" type="text" value="en" spellcheck="false">
+
+      <label class="check"><input id="streaming" type="checkbox" checked> Stream responses</label>
+
+      <div class="button-row">
+        <button id="new-session" type="button">New session</button>
+        <button id="clone-session" type="button" disabled>Clone</button>
+        <button id="destroy-session" type="button" disabled>Destroy</button>
+      </div>
+
+      <h2>Session info</h2>
+      <label for="session-select">Active session</label>
+      <select id="session-select" disabled></select>
+      <dl class="info">
+        <dt>State</dt><dd id="session-state">none</dd>
+        <dt>Usage</dt><dd id="session-usage">–</dd>
+        <dt>Quota</dt><dd id="session-quota">–</dd>
+      </dl>
+    </aside>
+
+    <section class="chat">
+      <div class="chat-toolbar">
+        <h2>Transcript</h2>
+        <button id="clear-transcript" type="button" class="small">Clear transcript</button>
+      </div>
+      <div id="transcript" class="transcript" aria-live="polite"></div>
+      <form id="composer" class="composer">
+        <textarea id="prompt" rows="3" placeholder="Type a prompt. Enter sends, Shift+Enter inserts a newline." spellcheck="false"></textarea>
+        <div class="button-col">
+          <button id="send" type="submit">Send</button>
+          <button id="abort" type="button" disabled>Abort</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <details class="log" id="log-details">
+    <summary>Raw API log <span id="log-count">(0)</span></summary>
+    <div class="button-row">
+      <button id="copy-log" type="button" class="small">Copy log</button>
+      <button id="clear-log" type="button" class="small">Clear log</button>
+    </div>
+    <pre id="log"></pre>
+  </details>
+
+  <script src="app.js"></script>
+</body>
+</html>
